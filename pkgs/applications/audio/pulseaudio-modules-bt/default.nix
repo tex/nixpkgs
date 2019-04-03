@@ -23,19 +23,15 @@ let
 
 in stdenv.mkDerivation rec {
   name = "pulseaudio-modules-bt-${version}";
-  version = "unstable-2019-01-05";
+  version = "unstable-2019-04-12";
 
   src = fetchFromGitHub {
     owner = "EHfive";
     repo = "pulseaudio-modules-bt";
-    rev = "4b0cde160c96f40d860fef267a6ded49ae045be0";
-    sha256 = "15jw5nf2dhqqdwzyh2x5kdkrq7f3qn140gw6gmspcai9kplhk24w";
+    rev = "9ff89b430c67e98eb3a74e0f06a8957449e21927";
+    sha256 = "1sffm08mjizri2mx2rjpfwqgsbpy2b8v92nkvwl1s0j51dji6s6r";
     fetchSubmodules = true;
   };
-
-  patches = [
-    ./fix-install-path.patch
-  ];
 
   nativeBuildInputs = [
     pkgconfig
@@ -61,6 +57,7 @@ in stdenv.mkDerivation rec {
     # Pulseaudio version is detected with a -rebootstrapped suffix which build system assumptions
     substituteInPlace config.h.in --replace PulseAudio_VERSION ${pulseaudio.version}
     substituteInPlace CMakeLists.txt --replace '${"\${PulseAudio_VERSION}"}' ${pulseaudio.version}
+    sed -i 's:LIBRARY DESTINATION ''${PulseAudio_modlibexecdir}:LIBRARY DESTINATION ''${CMAKE_INSTALL_PREFIX}/lib/pulse-''${PulseAudio_VERSION}/modules/:' CMakeLists.txt
   '';
 
   postFixup = ''
